@@ -1,0 +1,31 @@
+---
+title: "Building a Self-Improving RAG System for AI Agents"
+description: "Lessons from building a RAG database that improves itself through user feedback loops for an AI-powered audience builder."
+date: "2025-09-10"
+tags: [AI, RAG, Python, LLM]
+published: true
+---
+
+When we built the Audience Builder AI Agent at Bluecore, one of the biggest challenges was accuracy. The initial LLM responses were decent, but they lacked the domain-specific knowledge needed for complex marketing audiences.
+
+## The RAG Approach
+
+We initialized a vector database with seed data — thousands of existing audience configurations, their attributes, and business rules. When a user describes an audience in natural language, the system retrieves relevant context from this database before generating the configuration.
+
+## Self-Improvement Loop
+
+The key insight was making the RAG database self-improving:
+
+1. When the agent produces a result, the user can accept or modify it
+2. Accepted configurations are fed back into the vector database as positive examples
+3. The system tracks which retrievals led to successful outcomes
+4. Over time, the retrieval ranking adjusts to favor patterns that work
+
+## Architecture
+
+- **Vector DB**: Stores embeddings of audience configurations
+- **Feedback Service**: Processes user acceptance/rejection signals
+- **Re-ranking Layer**: Adjusts retrieval weights based on feedback
+- **Engine Service**: Standalone service with auth, exposed via URL
+
+The result is a system that gets smarter with every interaction, with accuracy improving by roughly 15% month-over-month in the first quarter.

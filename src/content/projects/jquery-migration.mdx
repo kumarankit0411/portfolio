@@ -1,0 +1,32 @@
+---
+title: "jQuery to Custom Library Migration"
+description: "Replaced jQuery with a lightweight 6KB custom library, achieving 5x bundle size reduction and significant execution speed improvements."
+date: "2024-03-15"
+tags: [JavaScript, jQuery, Performance, Bundle Optimization]
+published: true
+---
+
+## Overview
+
+Led the initiative to replace jQuery across Bluecore's web application with a lightweight custom library. The migration reduced bundle size from 30KB to 6KB (5x reduction) and significantly improved execution speed without any loss of functionality.
+
+## Approach
+
+- Analyzed jQuery usage patterns across the entire codebase
+- Identified the most commonly used APIs and their dependencies
+- Built a minimal, tree-shakeable replacement using modern browser APIs
+- Implemented incremental migration strategy to avoid breaking changes
+
+## Results
+
+- Bundle size: 30KB → 6KB (80% reduction)
+- Execution speed: 3x faster DOM operations
+- Zero functionality loss across all supported browsers
+- All existing tests passed without modification
+
+## Technical Highlights
+
+- Leveraged modern DOM APIs (querySelector, classList, closest, etc.)
+- Implemented only the most-used jQuery patterns (DOM traversal, event delegation, AJAX)
+- Built with ES modules for tree-shaking compatibility
+- Maintained the same API surface for drop-in replacement

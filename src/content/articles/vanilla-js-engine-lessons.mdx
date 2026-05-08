@@ -1,0 +1,35 @@
+---
+title: "Vanilla JS Engine: Lessons from Building a Zero-Dependency Runtime"
+description: "What I learned architecting a high-performance JavaScript engine for Fortune 500 e-commerce campaigns."
+date: "2025-05-12"
+tags: [JavaScript, Performance, Architecture, E-commerce]
+published: true
+---
+
+Building a JavaScript engine from scratch that runs in the browser and powers campaigns for Nike and Reebok taught me a lot about low-level JavaScript performance.
+
+## Why Vanilla JS?
+
+Frameworks come and go, but the browser's native APIs are forever. For our use case — injecting dynamic content into retailer pages without conflicts — we needed full control.
+
+## Key Architectural Decisions
+
+### 1. RAF-Based Execution Loop
+
+Every campaign operation runs within `requestAnimationFrame` to avoid layout thrashing. This guarantees consistent 60fps even during complex DOM manipulations.
+
+### 2. Minimal DOM Surface
+
+We batch all DOM reads before writes, using a task queue pattern. This eliminated nearly all forced reflows.
+
+### 3. Memory Pooling
+
+For high-frequency operations (analytics events, impression tracking), we pre-allocate and reuse objects to avoid GC pressure during critical moments.
+
+### 4. Sandboxed Execution
+
+Each campaign runs in an isolated scope with a controlled API surface, preventing cross-campaign interference.
+
+## The Result
+
+A 6KB engine that handles millions of daily executions with zero latency, even during Black Friday traffic spikes.

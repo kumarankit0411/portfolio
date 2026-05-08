@@ -1,0 +1,29 @@
+---
+title: "Audience Builder AI Agent"
+description: "An AI-powered agent that converts natural language descriptions into runnable audience segments, dramatically reducing manual configuration time."
+date: "2025-08-15"
+tags: [React, TypeScript, Python, AI, RAG, LLM]
+published: true
+---
+
+## Overview
+
+Built an AI Agent for Bluecore's Audience Builder that allows marketing teams to describe their target audience in plain English and have it automatically converted into a fully configured, runnable audience segment in the UI.
+
+## How It Works
+
+- Natural language input is processed through an LLM pipeline
+- A self-improving RAG database initialized with seed data provides contextual accuracy
+- The agent engine service runs with its own auth layer and is exposed via a dedicated URL
+- Results are rendered directly in the Audience Builder UI as ready-to-use segments
+
+## Technical Architecture
+
+- **Frontend**: React + TypeScript with real-time streaming of agent reasoning
+- **Agent Engine**: Python-based service with REST API
+- **RAG Database**: Self-improving vector database that learns from user corrections
+- **Auth**: Dedicated auth layer for the agent service
+
+## Impact
+
+Reduced audience configuration time from hours to seconds. The AI Agent now handles 40%+ of all audience creation requests, with continuous accuracy improvement through the RAG feedback loop.

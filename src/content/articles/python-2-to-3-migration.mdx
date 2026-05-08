@@ -1,0 +1,37 @@
+---
+title: "Migrating Python 2 to 3 Across 450 Repositories"
+description: "How we used AI-assisted code analysis to automate and orchestrate one of the largest Python migrations I've ever been part of."
+date: "2025-07-20"
+tags: [Python, Migration, AI, Infrastructure]
+published: true
+---
+
+Migrating from Python 2 to 3 is a well-understood problem — but doing it across 450+ repositories with zero downtime is a coordination challenge.
+
+## The Scale
+
+- 450+ repositories
+- Thousands of source files
+- Multiple service dependencies
+- Zero tolerance for production downtime
+
+## AI-Assisted Analysis
+
+We leveraged Claude Code to automate data extraction across all repositories. The AI helped us:
+
+- Scan every repository for Python 2-specific patterns
+- Classify migration complexity per repo
+- Identify dependency chains and migration order
+- Generate initial migration candidates
+
+## Phased Rollout Strategy
+
+1. **Analysis phase**: AI-powered scanning of all 450+ repos
+2. **Prioritization**: Critical path services first, leaf services last
+3. **Automated migration**: Bulk conversion with manual review for edge cases
+4. **Integration testing**: Rigorous testing at each phase
+5. **Production cutover**: Phased rollouts maintaining 100% availability
+
+## Results
+
+100% system availability throughout the transition. The AI-assisted approach reduced the manual analysis effort by an estimated 80%.
