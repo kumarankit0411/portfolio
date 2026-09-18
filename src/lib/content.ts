@@ -2,6 +2,8 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 
+export type ProjectStatus = "live" | "in-progress" | "done";
+
 export interface ContentMeta {
   slug: string;
   title: string;
@@ -9,6 +11,8 @@ export interface ContentMeta {
   date: string;
   tags?: string[];
   published?: boolean;
+  status?: ProjectStatus;
+  link?: string;
 }
 
 const projectsDir = path.join(process.cwd(), "src/content/projects");
