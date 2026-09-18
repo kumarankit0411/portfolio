@@ -4,7 +4,7 @@ import { getAllProjects } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "Projects I've built and contributed to.",
+  description: "Biker Bazaar and the systems I've built along the way.",
 };
 
 export default function ProjectsPage() {
@@ -14,7 +14,7 @@ export default function ProjectsPage() {
     <div>
       <h1 className="text-3xl font-bold tracking-tight">Projects</h1>
       <p className="mt-2 text-muted">
-        Things I&apos;ve built and contributed to.
+        Things I&apos;ve founded, built, and contributed to.
       </p>
       {projects.length > 0 ? (
         <div className="mt-10 grid gap-4 sm:grid-cols-2">

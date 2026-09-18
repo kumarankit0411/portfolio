@@ -16,11 +16,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Ankit Kumar | Senior Software Engineer",
+    default: "Ankit Kumar | Founder & CEO, Biker Bazaar",
     template: "%s | Ankit Kumar",
   },
   description:
-    "Senior Software Engineer specializing in high-performance web architecture, JavaScript internals, and intelligent product features for Fortune 500 marketing brands.",
+    "Founder & CEO of Biker Bazaar (bikerbazaar.in) — a marketplace for used motorcycles and riding gear in India. Previously Senior Software Engineer at Bluecore building high-performance web systems for Fortune 500 brands.",
 };
 
 export default function RootLayout({

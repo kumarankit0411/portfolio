@@ -1,0 +1,76 @@
+---
+title: "I Turned My Laptop Into a Headless Server and Code From My Phone for Free"
+description: "How I built a $0 mobile dev rig — AI agents on my Mac, a Tailscale tunnel, and a live browser preview in my pocket. No keyboard required."
+date: "2026-09-16"
+tags: [Next.js, Tailscale, OpenCode, AI, Developer Tools]
+published: true
+---
+
+For years, "coding on a phone" meant tiny keyboards, cramped editor panes, and an exercise in frustration. That era is ending — not because phones got keyboards, but because the bottleneck moved from *typing* to *steering*. With AI agents doing the writing, your phone only needs two things: a way to talk to your code, and a way to see it running. This is the rig I built to run Biker Bazaar from anywhere — and it costs $0.
+
+## The Architecture: Decouple the Brain From the Interface
+
+Existing tools like Claude Code Remote Control hint at this future, but they come with monthly subscriptions and rarely give you what a founder actually needs: a real browser preview with hot module replacement (HMR). So I built the alternative — three pillars, all free:
+
+| Component | Tool | Role |
+| --- | --- | --- |
+| Execution | Your Mac / Linux PC | Runs the dev server, the filesystem, and the AI agent |
+| Networking | Tailscale | Private WireGuard tunnel between your machine and phone |
+| Control | Termius + Mobile Browser | SSH terminal + live app preview |
+
+## Step 1: Configuring Tailscale
+
+1. Install Tailscale on your laptop and log in.
+2. Install the Tailscale app on your phone and log in with the same account.
+3. Note your laptop's Tailnet IP (e.g. `100.x.y.z`) — that's your persistent private address.
+
+## Step 2: Running the Dev Server on All Interfaces
+
+Dev servers bind to `127.0.0.1` by default, which no other device can reach. Bind to all interfaces so the tunnel can route traffic to it:
+
+```bash
+npx next dev --hostname 0.0.0.0
+```
+
+## Step 3: Unblocking HMR From a Cross-Origin Host
+
+Next.js blocks cross-origin requests to dev-only endpoints — that's exactly what blocks instant reloads from your phone. In current Next.js (15.5+ / 16), the fix is the top-level `allowedDevOrigins` config, not the old `experimental.serverActions` key:
+
+```ts
+// next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  // Allow your phone's Tailnet address past the dev-server origin check
+  allowedDevOrigins: ["100.x.y.z:3000"],
+};
+
+export default nextConfig;
+```
+
+## Step 4: Connecting With Termius and OpenCode
+
+1. In Termius, create an SSH host using your laptop's Tailscale IP — use SSH key auth rather than a password.
+2. Connect, navigate to your project, and launch OpenCode (or your preferred CLI agent).
+3. **Pro-tip: run it inside `tmux`.** If your phone drops from Wi-Fi to 5G mid-session, your agent and dev server keep running. Reconnect with `tmux attach`.
+
+## The Two-Tab Workflow
+
+Once it's wired up, the loop is two tabs:
+
+- **Tab 1 — Steering:** in Termius, tell OpenCode what to build: *"Create a responsive hero section with a frosted-glass effect and an Explore button."* The agent writes it straight to your laptop's SSD.
+- **Tab 2 — Preview:** open `http://100.x.y.z:3000` in your mobile browser. The `allowedDevOrigins` config means HMR reloads the page the moment the agent saves the file — so you're auditing and steering in real time, not typing.
+
+## Why Not Just a Cloud VM?
+
+Codespaces and remote VSCode get you partway there, but they rent you a stranger's machine. This rig uses *your own* compute, filesystem, terminal, and localhost — $0 marginal cost, no data leaving your tailnet, and the exact same environment you use at your desk.
+
+## Security, Isolation & Teardown
+
+- **Private by default:** Tailscale IPs are unreachable outside your tailnet. Even knowing the IP, no one can connect without being authenticated into your private mesh.
+- **Isolated:** the dev server only runs when you explicitly start it.
+- **Disposable:** stop the process and toggle Tailscale down — your machine is instantly private again. No firewall rules, no unpairing.
+
+## The Point
+
+This isn't about replacing the laptop — it's about repurposing it as personal, headless, $0 cloud compute. On a train, at a cafe, away from your desk, I can steer a production codebase with nothing but a phone and a live preview of the result. When the input method stops being the bottleneck, location stops too. I've shipped Biker Bazaar this way — and it's the most freeing setup I've used.

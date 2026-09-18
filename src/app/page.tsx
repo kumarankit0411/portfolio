@@ -17,10 +17,11 @@ export default function Home() {
           Ankit Kumar.
         </h1>
         <h2 className="text-2xl font-semibold tracking-tight text-muted sm:text-3xl">
-          I build high-performance web architecture.
+          Founder & CEO of Biker Bazaar.
         </h2>
         <p className="max-w-lg text-base leading-relaxed text-muted">
-          Senior Software Engineer 2.2 at{" "}
+          I spent 7 years building high-performance web architecture for
+          Fortune 500 marketing brands at{" "}
           <a
             href="https://bluecore.com"
             target="_blank"
@@ -28,10 +29,18 @@ export default function Home() {
             className="text-accent hover:text-accent-light transition-colors"
           >
             Bluecore
-          </a>{" "}
-          with 7+ years of experience. I specialize in building scalable
-          frontend systems, JavaScript engines, and AI-powered product features
-          for Fortune 500 marketing brands.
+          </a>
+          . Now I&apos;m building{" "}
+          <a
+            href="https://bikerbazaar.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:text-accent-light transition-colors"
+          >
+            bikerbazaar.in
+          </a>
+          , a marketplace for buying and selling used motorcycles and riding
+          gear across India.
         </p>
         <div className="flex items-center gap-4">
           <Link
@@ -50,24 +59,63 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Spotlight */}
+      <section className="animate-fade-in rounded-xl border border-accent/30 bg-gradient-to-br from-accent/10 via-transparent to-transparent p-6 sm:p-8">
+        <div className="flex items-center justify-between gap-4">
+          <p className="font-mono text-sm text-accent">Currently building</p>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent-light">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+            Live
+          </span>
+        </div>
+        <h3 className="mt-3 text-2xl font-bold tracking-tight">
+          Biker Bazaar
+        </h3>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+          An online marketplace for used motorcycles, helmets, boots, and
+          riding gear in India. I founded it and built the entire product — from
+          the marketplace core and search to Razorpay payments, premium tiers,
+          and an SEO content engine.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {["Founder & CEO", "Products", "Marketplaces", "SEO"].map((tag) => (
+            <span
+              key={tag}
+              className="inline-flex items-center rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent-light"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+        <a
+          href="https://bikerbazaar.in"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-5 inline-flex h-10 items-center justify-center rounded-lg border border-accent bg-accent/10 px-5 text-sm font-medium text-accent-light transition-all hover:bg-accent/20"
+        >
+          Visit bikerbazaar.in &rarr;
+        </a>
+      </section>
+
       {/* About */}
       <section>
         <SectionHeading number="01." title="About Me" />
         <div className="space-y-4 text-base leading-relaxed text-muted">
           <p>
-            I&apos;m a Senior Software Engineer 2.2 at Bluecore, where I build
-            and maintain enterprise-grade marketing platforms for Fortune 500
-            brands. Over the past 7 years, I&apos;ve worked across the full
-            stack — from architecting Vanilla JS engines for Tier-1 retailers
+            I&apos;m the founder and CEO of Biker Bazaar, a live marketplace
+            for used motorcycles and riding gear in India. Before that I spent
+            7 years at Bluecore as a Senior Software Engineer, building and
+            maintaining enterprise-grade marketing platforms for Fortune 500
+            brands — from architecting Vanilla JS engines for Tier-1 retailers
             like Nike and Reebok to building AI-powered tools that convert
             natural language into runnable audience segments.
           </p>
           <p>
             My expertise lies in JavaScript internals, React, TypeScript, and
             Next.js, with deep experience in building high-performance frontend
-            systems. I&apos;m passionate about bridging the gap between complex
-            engineering and business goals, leveraging Python and Agentic AI to
-            drive intelligent automation and product growth.
+            systems. Today I apply that same engineering to my own product —
+            designing marketplace features, payment flows, and growth systems
+            end-to-end, from SQL schema to shipped UI.
           </p>
         </div>
       </section>
@@ -78,9 +126,24 @@ export default function Home() {
         <div className="space-y-6">
           {[
             {
+              role: "Founder & CEO",
+              company: "Biker Bazaar",
+              period: "Jun 2026 — Present",
+              description:
+                "Founded and built bikerbazaar.in, an online marketplace for used motorcycles, helmets, boots, and riding gear in India. Sole engineer from idea to launch — marketplace core, search and filters, Razorpay monetization with premium tiers, and an SEO content engine driving organic growth.",
+              tags: [
+                "Next.js",
+                "TypeScript",
+                "Supabase",
+                "Razorpay",
+                "SEO",
+                "Product",
+              ],
+            },
+            {
               role: "Senior Software Engineer 2.2",
               company: "Bluecore",
-              period: "Feb 2026 — Present",
+              period: "Feb 2026 — May 2026",
               description:
                 "Leveraging AI (Claude Code) to automate data extraction across 450+ repositories for Python 2 to 3 migration. Architecting new user-facing features and optimizing legacy modules for improved performance and engagement.",
               tags: ["React", "TypeScript", "Python", "Claude Code", "AI"],

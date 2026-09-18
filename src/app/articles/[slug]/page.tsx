@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { getAllArticles, getArticleContent } from "@/lib/content";
 
 export async function generateStaticParams() {
@@ -62,7 +63,10 @@ export default async function ArticlePage({ params }: Props) {
         </div>
       </header>
       <div className="prose">
-        <MDXRemote source={source} />
+        <MDXRemote
+          source={source}
+          options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+        />
       </div>
     </article>
   );
