@@ -3,16 +3,24 @@ import SectionHeading from "@/components/SectionHeading";
 import ProjectCard from "@/components/ProjectCard";
 import ArticleCard from "@/components/ArticleCard";
 import SpotlightCard from "@/components/SpotlightCard";
+import GitHubHeatmap from "@/components/GitHubHeatmap";
+import LeetCodeTracker from "@/components/LeetCodeTracker";
+import { getContributions } from "@/lib/github";
+import { getLeetCodeData } from "@/lib/leetcode";
+
+export const revalidate = 3600;
 import {
   getAllProjects,
   getAllArticles,
   getFeaturedItems,
 } from "@/lib/content";
 
-export default function Home() {
+export default async function Home() {
   const projects = getAllProjects().slice(0, 3);
   const articles = getAllArticles().slice(0, 4);
   const featured = getFeaturedItems();
+  const github = await getContributions().catch(() => null);
+  const leetcode = await getLeetCodeData().catch(() => null);
 
   return (
     <div className="space-y-24">
@@ -237,9 +245,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* GitHub Activity */}
+      <section>
+        <SectionHeading number="04." title="GitHub Activity" />
+        {github ? (
+          <GitHubHeatmap data={github} />
+        ) : (
+          <div className="rounded-2xl border border-border bg-surface p-6">
+            <p className="text-sm text-muted">
+              GitHub activity couldn&apos;t be loaded right now. Check back
+              later.
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* LeetCode Tracker */}
+      <section>
+        <SectionHeading number="05." title="LeetCode Tracker" />
+        {leetcode ? (
+          <LeetCodeTracker data={leetcode} />
+        ) : (
+          <div className="rounded-2xl border border-border bg-surface p-6">
+            <p className="text-sm text-muted">
+              LeetCode activity couldn&apos;t be loaded right now. Check back
+              later.
+            </p>
+          </div>
+        )}
+      </section>
+
       {/* Projects */}
       <section>
-        <SectionHeading number="04." title="Projects" />
+        <SectionHeading number="06." title="Projects" />
         {projects.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2">
             {projects.map((project) => (
@@ -261,7 +299,7 @@ export default function Home() {
 
       {/* Articles */}
       <section>
-        <SectionHeading number="05." title="Articles" />
+        <SectionHeading number="07." title="Articles" />
         {articles.length > 0 ? (
           <div>
             {articles.map((article) => (
@@ -283,7 +321,7 @@ export default function Home() {
 
       {/* Education */}
       <section>
-        <SectionHeading number="06." title="Education" />
+        <SectionHeading number="08." title="Education" />
         <div className="rounded-lg border border-border bg-surface p-5">
           <h3 className="font-semibold text-foreground">
             B.Tech in Computer Science
@@ -299,7 +337,7 @@ export default function Home() {
 
       {/* Achievements */}
       <section>
-        <SectionHeading number="07." title="Achievements" />
+        <SectionHeading number="09." title="Achievements" />
         <div className="space-y-4">
           <div className="rounded-lg border border-border bg-surface p-5">
             <h3 className="font-semibold text-foreground">
