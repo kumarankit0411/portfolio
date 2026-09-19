@@ -3,6 +3,7 @@ import path from "path";
 import matter from "gray-matter";
 
 export type ProjectStatus = "live" | "in-progress" | "done";
+export type ContentKind = "project" | "article";
 
 export interface ContentMeta {
   slug: string;
@@ -13,10 +14,17 @@ export interface ContentMeta {
   published?: boolean;
   status?: ProjectStatus;
   link?: string;
+  kind?: ContentKind;
+  featured?: boolean;
+  featuredOrder?: number;
 }
 
 const projectsDir = path.join(process.cwd(), "src/content/projects");
 const articlesDir = path.join(process.cwd(), "src/content/articles");
+
+function byDateDesc(a: ContentMeta, b: ContentMeta) {
+  return new Date(b.date).getTime() - new Date(a.date).getTime();
+}
 
 function getSlugs(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
@@ -26,33 +34,48 @@ function getSlugs(dir: string): string[] {
     .map((f) => f.replace(/\.mdx$/, ""));
 }
 
-function parseMeta(dir: string, slug: string): ContentMeta {
+function parseMeta(dir: string, slug: string, kind: ContentKind): ContentMeta {
   const filePath = path.join(dir, `${slug}.mdx`);
   const source = fs.readFileSync(filePath, "utf-8");
   const { data } = matter(source);
-  return { slug, ...data } as ContentMeta;
+  return { slug, kind, ...data } as ContentMeta;
 }
 
 export function getAllProjects(): ContentMeta[] {
   return getSlugs(projectsDir)
-    .map((slug) => parseMeta(projectsDir, slug))
+    .map((slug) => parseMeta(projectsDir, slug, "project"))
     .filter((p) => p.published !== false)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort(byDateDesc);
 }
 
 export function getAllArticles(): ContentMeta[] {
   return getSlugs(articlesDir)
-    .map((slug) => parseMeta(articlesDir, slug))
+    .map((slug) => parseMeta(articlesDir, slug, "article"))
     .filter((a) => a.published !== false)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort(byDateDesc);
+}
+
+export function getFeaturedItems(): ContentMeta[] {
+  const projects = getAllProjects().filter((p) => p.featured);
+  const articles = getAllArticles().filter((a) => a.featured);
+  return [...projects, ...articles].sort(
+    (a, b) =>
+      (a.featuredOrder ?? 100) - (b.featuredOrder ?? 100) ||
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+}
+
+export function getAllShowcaseProjects(): ContentMeta[] {
+  const featuredArticles = getAllArticles().filter((a) => a.featured);
+  return [...getAllProjects(), ...featuredArticles].sort(byDateDesc);
 }
 
 export function getProjectBySlug(slug: string): ContentMeta {
-  return parseMeta(projectsDir, slug);
+  return parseMeta(projectsDir, slug, "project");
 }
 
 export function getArticleBySlug(slug: string): ContentMeta {
-  return parseMeta(articlesDir, slug);
+  return parseMeta(articlesDir, slug, "article");
 }
 
 function getContentBody(dir: string, slug: string): string {

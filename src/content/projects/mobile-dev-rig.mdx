@@ -1,0 +1,41 @@
+---
+title: "The Phone in Charge"
+description: "A $0 rig that turns a laptop into headless compute — prompt-driven coding with OpenCode and a live HMR preview from your phone via Tailscale."
+date: "2026-09-16"
+tags: [Next.js, Tailscale, OpenCode, AI, Developer Tools]
+status: done
+featured: true
+featuredOrder: 1
+published: true
+---
+
+## Overview
+
+I built a mobile dev rig so I can steer production codebases from my phone — no keyboard involved. It repurposes my laptop as a personal headless cloud: OpenCode runs on the Mac, Tailscale tunnels it to my phone, and a mobile browser renders the live app with hot reload.
+
+## The Architecture
+
+- **Brain (Mac):** the dev server, filesystem, and OpenCode agent
+- **Network (Tailscale):** a private WireGuard mesh that gives the phone a stable tailnet IP
+- **Interface (phone):** Termius for the terminal, a mobile browser for the live preview
+
+## The Build
+
+- Bound the dev server to all interfaces with `next dev --hostname 0.0.0.0`
+- Wired `allowedDevOrigins` into `next.config.ts` so cross-origin HMR from the tailnet IP works
+- Runs inside `tmux` so sessions survive phone Wi-Fi → 5G handoffs
+
+## The Workflow
+
+Two tabs: prompt OpenCode in Termius ("create a responsive hero with a frosted-glass effect"), watch it write to the Mac's SSD, and see the page update in the mobile browser the moment the file saves.
+
+## Full Write-Up
+
+How it works end to end, step by step: [I Turned My Laptop Into a Headless Server and Code From My Phone for Free](/articles/mobile-dev-rig-opencode-tailscale).
+
+## Stack
+
+- **OpenCode** — the AI agent
+- **Tailscale** — private mesh networking
+- **Termius** — mobile SSH
+- **Next.js** — the live dev server

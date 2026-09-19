@@ -94,7 +94,11 @@ export default function ProjectCard({ project }: { project: ContentMeta }) {
 
   return (
     <Link
-      href={`/projects/${project.slug}`}
+      href={
+        project.kind === "article"
+          ? `/articles/${project.slug}`
+          : `/projects/${project.slug}`
+      }
       className="group block rounded-lg border border-border bg-surface p-6 transition-all hover:border-accent/40 hover:bg-surface-alt"
     >
       {content}

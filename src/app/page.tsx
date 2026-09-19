@@ -2,11 +2,17 @@ import Link from "next/link";
 import SectionHeading from "@/components/SectionHeading";
 import ProjectCard from "@/components/ProjectCard";
 import ArticleCard from "@/components/ArticleCard";
-import { getAllProjects, getAllArticles } from "@/lib/content";
+import SpotlightCard from "@/components/SpotlightCard";
+import {
+  getAllProjects,
+  getAllArticles,
+  getFeaturedItems,
+} from "@/lib/content";
 
 export default function Home() {
   const projects = getAllProjects().slice(0, 3);
   const articles = getAllArticles().slice(0, 4);
+  const featured = getFeaturedItems();
 
   return (
     <div className="space-y-24">
@@ -60,41 +66,17 @@ export default function Home() {
       </section>
 
       {/* Spotlight */}
-      <section className="animate-fade-in rounded-xl border border-accent/30 bg-gradient-to-br from-accent/10 via-transparent to-transparent p-6 sm:p-8">
-        <div className="flex items-center justify-between gap-4">
-          <p className="font-mono text-sm text-accent">Currently building</p>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent-light">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-            Live
-          </span>
-        </div>
-        <h3 className="mt-3 text-2xl font-bold tracking-tight">
-          Biker Bazaar
-        </h3>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-          An online marketplace for used motorcycles, helmets, boots, and
-          riding gear in India. I founded it and built the entire product — from
-          the marketplace core and search to Razorpay payments, premium tiers,
-          and an SEO content engine.
+      <section className="space-y-6">
+        <p className="font-mono text-sm text-accent">
+          Currently building
         </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {["Founder & CEO", "Products", "Marketplaces", "SEO"].map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent-light"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-        <a
-          href="https://bikerbazaar.in"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-5 inline-flex h-10 items-center justify-center rounded-lg border border-accent bg-accent/10 px-5 text-sm font-medium text-accent-light transition-all hover:bg-accent/20"
-        >
-          Visit bikerbazaar.in &rarr;
-        </a>
+        {featured.length > 0 && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {featured.map((item, i) => (
+              <SpotlightCard key={item.slug} item={item} featured={i === 0} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* About */}

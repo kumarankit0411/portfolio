@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GlassCanvas from "@/components/GlassCanvas";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,9 +32,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased">
+        <GlassCanvas />
         <Header />
-        <main className="mx-auto max-w-4xl px-6 py-16">{children}</main>
-        <Footer />
+        <main className="relative z-10 mx-auto max-w-4xl px-6 py-16">
+          {children}
+        </main>
+        <div className="relative z-10">
+          <Footer />
+        </div>
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import ProjectCard from "@/components/ProjectCard";
-import { getAllProjects } from "@/lib/content";
+import { getAllShowcaseProjects } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsPage() {
-  const projects = getAllProjects();
+  const projects = getAllShowcaseProjects();
 
   return (
     <div>
