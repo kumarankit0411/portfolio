@@ -13,12 +13,16 @@ const DAY_LABELS: Record<number, string> = {
   5: "Fri",
 };
 
-const BASE = [20, 184, 166];
-const LEVEL_OPACITY = [0.09, 0.22, 0.38, 0.58, 0.8];
+const LEVEL_COLORS = [
+  "rgba(63,185,80,0.1)",
+  "rgba(46,160,67,0.28)",
+  "rgba(46,160,67,0.52)",
+  "rgba(63,185,80,0.78)",
+  "#39d353",
+];
 
 function cellColor(level: number): string {
-  const a = LEVEL_OPACITY[Math.max(0, Math.min(4, level))] ?? 0;
-  return `rgba(${BASE[0]},${BASE[1]},${BASE[2]},${a})`;
+  return LEVEL_COLORS[Math.max(0, Math.min(4, level))] ?? "rgba(0,0,0,0)";
 }
 
 function formatDate(iso: string): string {
@@ -99,19 +103,19 @@ export default function GitHubHeatmap({ data }: { data: HeatmapData }) {
         <div className="flex flex-wrap gap-2 font-mono text-xs">
           <span className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-alt px-3 py-1.5">
             <span className="text-muted">Total</span>
-            <span className="font-semibold text-accent-light">
+            <span className="font-semibold" style={{ color: "#39d353" }}>
               {data.total.toLocaleString()}
             </span>
           </span>
           <span className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-alt px-3 py-1.5">
             <span className="text-muted">Streak</span>
-            <span className="font-semibold text-accent-light">
+            <span className="font-semibold" style={{ color: "#39d353" }}>
               {stats.current} day{stats.current === 1 ? "" : "s"}
             </span>
           </span>
           <span className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-alt px-3 py-1.5">
             <span className="text-muted">Best</span>
-            <span className="font-semibold text-accent-light">
+            <span className="font-semibold" style={{ color: "#39d353" }}>
               {stats.maxStreak} day{stats.maxStreak === 1 ? "" : "s"}
             </span>
           </span>
@@ -200,11 +204,11 @@ export default function GitHubHeatmap({ data }: { data: HeatmapData }) {
         </p>
         <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted">
           <span>Less</span>
-          {LEVEL_OPACITY.map((a) => (
+          {LEVEL_COLORS.map((c) => (
             <span
-              key={a}
+              key={c}
               className="block h-[11px] w-[11px] rounded-[3px]"
-              style={{ backgroundColor: `rgba(${BASE[0]},${BASE[1]},${BASE[2]},${a})` }}
+              style={{ backgroundColor: c }}
               aria-hidden="true"
             />
           ))}

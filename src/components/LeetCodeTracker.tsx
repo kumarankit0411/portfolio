@@ -13,8 +13,13 @@ const DAY_LABELS: Record<number, string> = {
   5: "Fri",
 };
 
-const BASE = [139, 92, 246];
-const LEVEL_OPACITY = [0.08, 0.22, 0.4, 0.62, 0.85];
+const LEVEL_COLORS = [
+  "rgba(255,161,22,0.1)",
+  "rgba(255,161,22,0.26)",
+  "rgba(255,161,22,0.5)",
+  "rgba(255,176,59,0.76)",
+  "#ffb03b",
+];
 
 const DIFF_STYLE: Record<Difficulty, { label: string; color: string }> = {
   Easy: { label: "Easy", color: "#00b8a3" },
@@ -24,8 +29,7 @@ const DIFF_STYLE: Record<Difficulty, { label: string; color: string }> = {
 const DIFF_ORDER: Difficulty[] = ["Easy", "Medium", "Hard"];
 
 function cellColor(level: number): string {
-  const a = LEVEL_OPACITY[Math.max(0, Math.min(4, level))] ?? 0;
-  return `rgba(${BASE[0]},${BASE[1]},${BASE[2]},${a})`;
+  return LEVEL_COLORS[Math.max(0, Math.min(4, level))] ?? "rgba(0,0,0,0)";
 }
 
 function formatDate(iso: string): string {
@@ -107,25 +111,25 @@ export default function LeetCodeTracker({ data }: { data: LeetCodeData }) {
         <div className="flex flex-wrap gap-2 font-mono text-xs">
           <span className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-alt px-3 py-1.5">
             <span className="text-muted">Solved</span>
-            <span className="font-semibold text-accent-light">
+            <span className="font-semibold" style={{ color: "#ffb03b" }}>
               {stats.total.toLocaleString()}
             </span>
           </span>
           <span className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-alt px-3 py-1.5">
             <span className="text-muted">Streak</span>
-            <span className="font-semibold text-accent-light">
+            <span className="font-semibold" style={{ color: "#ffb03b" }}>
               {stats.currentStreak} day{stats.currentStreak === 1 ? "" : "s"}
             </span>
           </span>
           <span className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-alt px-3 py-1.5">
             <span className="text-muted">Best</span>
-            <span className="font-semibold text-accent-light">
+            <span className="font-semibold" style={{ color: "#ffb03b" }}>
               {stats.bestStreak} day{stats.bestStreak === 1 ? "" : "s"}
             </span>
           </span>
           <span className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-alt px-3 py-1.5">
             <span className="text-muted">Active</span>
-            <span className="font-semibold text-accent-light">
+            <span className="font-semibold" style={{ color: "#ffb03b" }}>
               {stats.activeDays} day{stats.activeDays === 1 ? "" : "s"}
             </span>
           </span>
@@ -288,13 +292,11 @@ export default function LeetCodeTracker({ data }: { data: LeetCodeData }) {
             </p>
             <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted">
               <span>Less</span>
-              {LEVEL_OPACITY.map((a) => (
+              {LEVEL_COLORS.map((c) => (
                 <span
-                  key={a}
+                  key={c}
                   className="block h-[11px] w-[11px] rounded-[3px]"
-                  style={{
-                    backgroundColor: `rgba(${BASE[0]},${BASE[1]},${BASE[2]},${a})`,
-                  }}
+                  style={{ backgroundColor: c }}
                   aria-hidden="true"
                 />
               ))}

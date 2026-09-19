@@ -372,7 +372,15 @@ export async function getLeetCodeData(): Promise<LeetCodeData> {
     pendingDates.delete(day);
   }
 
-  const recent = paired.slice(0, 8);
+  const seenTitles = new Set<string>();
+  const recent: LeetCodeRecent[] = [];
+  for (const p of paired) {
+    const rank = titleSlugSortKey(p.title);
+    if (seenTitles.has(rank)) continue;
+    seenTitles.add(rank);
+    recent.push(p);
+    if (recent.length >= 8) break;
+  }
   let bestTimePct: number | null = null;
   let bestMemoryPct: number | null = null;
   for (const p of paired) {
