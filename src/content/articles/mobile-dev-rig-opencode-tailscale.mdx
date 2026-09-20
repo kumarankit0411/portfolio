@@ -1,40 +1,62 @@
 ---
 title: "I Turned My Laptop Into a Headless Server and Code From My Phone for Free"
-description: "How I built a $0 mobile dev rig — AI agents on my Mac, a Tailscale tunnel, and a live browser preview in my pocket. No keyboard required."
+description: "A story of shipping website changes from a phone while traveling, powered by Tailscale, Termius, and an AI agent. Zero paid tools."
 date: "2026-09-16"
 tags: [Next.js, Tailscale, OpenCode, AI, Developer Tools]
 published: true
 ---
 
-For years, "coding on a phone" meant tiny keyboards, cramped editor panes, and an exercise in frustration. That era is ending — not because phones got keyboards, but because the bottleneck moved from *typing* to *steering*. With AI agents doing the writing, your phone only needs two things: a way to talk to your code, and a way to see it running. This is the rig I built to run Biker Bazaar from anywhere — and it costs $0.
+## The Problem
 
-## The Architecture: Decouple the Brain From the Interface
+I was traveling, and my laptop was not with me. That was fine until it wasn't. Halfway through the trip, it hit me: I wanted to ship a small change to my website. Nothing huge, just something that had been bugging me. And it was stuck, waiting for me to get back home and sit at my desk.
 
-Existing tools like Claude Code Remote Control hint at this future, but they come with monthly subscriptions and rarely give you what a founder actually needs: a real browser preview with hot module replacement (HMR). So I built the alternative — three pillars, all free:
+So I sat there, watching the trip go by, with one thought repeating in my head: *when will I get access to a laptop again?*
 
-| Component | Tool | Role |
-| --- | --- | --- |
-| Execution | Your Mac / Linux PC | Runs the dev server, the filesystem, and the AI agent |
-| Networking | Tailscale | Private WireGuard tunnel between your machine and phone |
-| Control | Termius + Mobile Browser | SSH terminal + live app preview |
+## The Idea
 
-## Step 1: Configuring Tailscale
+Then it landed, quietly. I have a phone in my pocket, and that phone is on the internet. The only thing standing between me and shipping this change was a laptop. So why did the laptop even need to be in the same room as me?
 
-1. Install Tailscale on your laptop and log in.
-2. Install the Tailscale app on your phone and log in with the same account.
-3. Note your laptop's Tailnet IP (e.g. `100.x.y.z`) — that's your persistent private address.
+I did not need the laptop physically. I needed what was inside it:
 
-## Step 2: Running the Dev Server on All Interfaces
+- **My project files**, sitting on the disk
+- **A terminal**, where the real work happens
+- **A way to run my website**, so I can see it, not just imagine it
 
-Dev servers bind to `127.0.0.1` by default, which no other device can reach. Bind to all interfaces so the tunnel can route traffic to it:
+If I could reach those three from my phone, I could work from anywhere.
+
+## The Tools
+
+So I started exploring, and I found two free pieces that fit together perfectly:
+
+- **Tailscale** connects my phone and my Mac through a private, secure tunnel. No public IPs, no port forwarding.
+- **Termius** is an SSH client that lets me open a terminal on my phone and log into my Mac.
+
+The combo did exactly what I needed. Tailscale gives every device a private address that only my devices can reach. Termius uses that address to open a real terminal. A few minutes later, my Mac was reachable from a moving train.
+
+## Getting a Terminal on a Phone
+
+- Install Tailscale on your Mac and your phone, and log in with the same account.
+- Note your Mac's Tailnet IP (e.g. `100.x.y.z`), its private address inside your network.
+- In Termius, create an SSH host using that IP, with SSH keys rather than a password.
+- Connect, and you are looking at your Mac's terminal, on your phone.
+
+I was in. Next I opened my project and launched OpenCode, my AI coding agent, right inside that terminal.
+
+## The Agent in the Terminal
+
+This was the trick that made everything reasonable. Typing a whole feature on a phone screen would have been torture. So I did not type. I ran OpenCode in the terminal and described what I wanted: fix the layout, change this copy, tweak that spacing. The agent wrote the code on my Mac while I stayed right where I was.
+
+One pro-tip if you try this: run the agent inside **tmux**. My phone kept dropping Wi-Fi and hopping to 5G, and every hop killed the connection. With tmux, my agent and my dev server kept running through all of it. I just reconnected and found everything exactly where I left it.
+
+## Seeing the Change on My Phone
+
+Making changes was only half the job. I wanted to prove they worked. Dev servers usually bind to `127.0.0.1`, which means "this computer only". From a phone, that is a dead end. The fix is to bind to all interfaces so the tunnel can reach the server:
 
 ```bash
 npx next dev --hostname 0.0.0.0
 ```
 
-## Step 3: Unblocking HMR From a Cross-Origin Host
-
-Next.js blocks cross-origin requests to dev-only endpoints — that's exactly what blocks instant reloads from your phone. In current Next.js (15.5+ / 16), the fix is the top-level `allowedDevOrigins` config, not the old `experimental.serverActions` key:
+Next.js also blocks cross-origin requests to dev-only endpoints by default, and that kills hot reload from another device. In current Next.js (15.5+ / 16), the fix is the top-level `allowedDevOrigins` config:
 
 ```ts
 // next.config.ts
@@ -48,29 +70,21 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 ```
 
-## Step 4: Connecting With Termius and OpenCode
+With that in place, I opened `http://100.x.y.z:3000` in my phone's browser. The page updated the instant OpenCode saved a file. I was watching my website run, live, from a train.
 
-1. In Termius, create an SSH host using your laptop's Tailscale IP — use SSH key auth rather than a password.
-2. Connect, navigate to your project, and launch OpenCode (or your preferred CLI agent).
-3. **Pro-tip: run it inside `tmux`.** If your phone drops from Wi-Fi to 5G mid-session, your agent and dev server keep running. Reconnect with `tmux attach`.
+## The Two-Screen Workflow
 
-## The Two-Tab Workflow
+- **Screen 1, steering.** Termius with OpenCode inside. Describe a change, and the agent writes it to my Mac.
+- **Screen 2, watching.** The phone browser pointed at the dev server. The page updates the moment the file saves.
 
-Once it's wired up, the loop is two tabs:
+That is the whole loop. I ship and deploy my code from anywhere this way, without a laptop in sight.
 
-- **Tab 1 — Steering:** in Termius, tell OpenCode what to build: *"Create a responsive hero section with a frosted-glass effect and an Explore button."* The agent writes it straight to your laptop's SSD.
-- **Tab 2 — Preview:** open `http://100.x.y.z:3000` in your mobile browser. The `allowedDevOrigins` config means HMR reloads the page the moment the agent saves the file — so you're auditing and steering in real time, not typing.
+## Security and Cleanup
 
-## Why Not Just a Cloud VM?
-
-Codespaces and remote VSCode get you partway there, but they rent you a stranger's machine. This rig uses *your own* compute, filesystem, terminal, and localhost — $0 marginal cost, no data leaving your tailnet, and the exact same environment you use at your desk.
-
-## Security, Isolation & Teardown
-
-- **Private by default:** Tailscale IPs are unreachable outside your tailnet. Even knowing the IP, no one can connect without being authenticated into your private mesh.
-- **Isolated:** the dev server only runs when you explicitly start it.
-- **Disposable:** stop the process and toggle Tailscale down — your machine is instantly private again. No firewall rules, no unpairing.
+- **Private by default.** Tailscale addresses are unreachable outside your private network.
+- **Isolated.** The dev server only runs when you start it, nothing more.
+- **Disposable.** Stop the server, switch Tailscale off, and your Mac goes back to being just your Mac.
 
 ## The Point
 
-This isn't about replacing the laptop — it's about repurposing it as personal, headless, $0 cloud compute. On a train, at a cafe, away from your desk, I can steer a production codebase with nothing but a phone and a live preview of the result. When the input method stops being the bottleneck, location stops too. I've shipped Biker Bazaar this way — and it's the most freeing setup I've used.
+The laptop is a means, not a requirement. The internet was already in my pocket. One afternoon, I turned my own Mac into a headless server, and now I can keep shipping regardless of where my laptop happens to be.
