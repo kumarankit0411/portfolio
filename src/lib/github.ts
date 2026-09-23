@@ -49,6 +49,44 @@ function monthLabels(weeks: DayData[][]): { label: string; index: number }[] {
   return out;
 }
 
+function startOfWeekSundayUTC(d: Date): Date {
+  const out = new Date(d.getTime());
+  out.setUTCDate(out.getUTCDate() - out.getUTCDay());
+  return out;
+}
+
+// Build the weeks grid by date arithmetic, not DOM/API position.
+// The scrape HTML lists days row-major (all Sundays, then Mondays, ...)
+// with shorter trailing rows for the partial current week, and the
+// GraphQL API omits out-of-range days in partial weeks — so positional
+// index math wraps days into the wrong columns. Anchoring on the date
+// itself is robust to both.
+function toWeeks(
+  cells: { date: string; count: number; level: number }[]
+): DayData[][] {
+  const byDate = new Map<string, { count: number; level: number }>();
+  for (const c of cells) {
+    if (c.date) byDate.set(c.date, { count: c.count, level: c.level });
+  }
+  const sorted = [...byDate.keys()].sort();
+  if (sorted.length === 0) return [];
+  const start = startOfWeekSundayUTC(new Date(`${sorted[0]}T00:00:00Z`));
+  const weeks: DayData[][] = [];
+  for (const date of sorted) {
+    const d = new Date(`${date}T00:00:00Z`);
+    const diffDays = Math.round((d.getTime() - start.getTime()) / 864e5);
+    const wi = Math.floor(diffDays / 7);
+    const dow = diffDays % 7;
+    while (weeks.length <= wi) {
+      weeks.push(
+        Array.from({ length: 7 }, () => ({ date: "", count: 0, level: 0 }))
+      );
+    }
+    const v = byDate.get(date)!;
+    weeks[wi][dow] = { date, count: v.count, level: v.level };
+  }
+  return weeks;
+}
 function asHeatmap(
   username: string,
   total: number,
@@ -97,25 +135,13 @@ async function fetchScrape(username: string): Promise<HeatmapData> {
     throw new Error("No contribution cells found in GitHub response");
   }
 
-  const weekCount = Math.round(cells.length / 7);
-  const weeks: (DayData | null)[][] = Array.from({ length: weekCount }, () =>
-    Array.from({ length: 7 }, () => null)
-  );
-  cells.forEach((c, k) => {
-    const dow = Math.floor(k / weekCount);
-    const week = k % weekCount;
-    weeks[week][dow] = { date: c.date, count: c.count, level: c.level };
-  });
+  const weeks = toWeeks(cells);
 
-  const filled: DayData[][] = weeks.map((w) =>
-    w.map((d) => d ?? { date: "", count: 0, level: 0 })
-  );
-
-  const total = filled
+  const total = weeks
     .flat()
     .reduce((sum, d) => (d.date ? sum + d.count : sum), 0);
 
-  return asHeatmap(username, total, "scrape", filled);
+  return asHeatmap(username, total, "scrape", weeks);
 }
 
 async function fetchGraphQL(username: string, token: string): Promise<HeatmapData> {
@@ -175,13 +201,14 @@ async function fetchGraphQL(username: string, token: string): Promise<HeatmapDat
     THIRD_QUARTER: 3,
     FOURTH_QUARTER: 4,
   };
-  const weeks: DayData[][] = cal.weeks.map((w) =>
+  const days = (cal.weeks ?? []).flatMap((w) =>
     (w.contributionDays ?? []).map((d) => ({
       date: d.date,
       count: d.contributionCount,
       level: levelNumbers[d.level] ?? 0,
     }))
   );
+  const weeks = toWeeks(days);
   const total = cal.totalContributions ?? 0;
   return asHeatmap(username, total, "github", weeks);
 }
