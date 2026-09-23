@@ -1,0 +1,18 @@
+name: Refresh homepage data
+
+on:
+  schedule:
+    # Every 15 minutes — picks up GitHub contributions + LeetCode pushes
+    # from any repo (GitHub has no global "any push" webhook).
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  revalidate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping revalidate endpoint
+        run: |
+          curl -sS -X POST "https://www.imankit.dev/api/revalidate?secret=${{ secrets.REVALIDATE_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'

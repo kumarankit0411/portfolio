@@ -1,7 +1,5 @@
 import { handleRevalidate } from "@/lib/revalidate";
 
-// Kept for backwards compat with the existing leetcode_submissions webhook.
-// Same as /api/revalidate: revalidates the whole homepage (GitHub + LeetCode).
 export async function POST(req: Request): Promise<Response> {
   return handleRevalidate(req);
 }
