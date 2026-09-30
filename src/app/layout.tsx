@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CursorGlow from "@/components/CursorGlow";
+import Backdrop from "@/components/Backdrop";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,9 +32,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <CursorGlow />
+        <Backdrop />
         <Header />
-        <main className="relative z-10 mx-auto max-w-4xl px-6 py-16">
+        <main className="relative z-10 mx-auto max-w-4xl px-6 pt-28 pb-16 sm:pt-32">
           {children}
         </main>
         <div className="relative z-10">
